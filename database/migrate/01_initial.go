@@ -28,8 +28,8 @@ PRIMARY KEY (id)
 
 func init() {
 	up := []string{
-		accountTable,
-		tokenTable,
+		userTable,
+		postTable,
 	}
 
 	down := []string{
