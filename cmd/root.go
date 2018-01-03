@@ -52,7 +52,7 @@ func initConfig() {
 
 		// Search for the config in the home dir with name ".go-base"
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".go-base")
+		viper.SetConfigName(".thought-log")
 	}
 
 	viper.AutomaticEnv()

@@ -14,6 +14,12 @@
   version = "v3.3.2"
 
 [[projects]]
+  name = "github.com/go-ozzo/ozzo-validation"
+  packages = ["."]
+  revision = "85dcd8368eba387e65a03488b003e233994e87e9"
+  version = "v3.3"
+
+[[projects]]
   name = "github.com/go-pg/migrations"
   packages = ["."]
   revision = "56f220c05c9e11f7ca5b06a232e43eda16ce2cde"
@@ -136,6 +142,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "c37c342ed008eb78bc863807ba76292e602e37c04ae34c8e3d7e8253fd3dfbcb"
+  inputs-digest = "9a657407f394e290ca28c5bb7b7172003133d52493047c9bcdc6cd775548d0e8"
   solver-name = "gps-cdcl"
   solver-version = 1
