@@ -24,7 +24,7 @@ var migrateCmd = &cobra.Command{
 		if reset {
 			migrate.Reset()
 		}
-		migrage.Migrate(argsMig)
+		migrate.Migrate(argsMig)
 	},
 }
 
