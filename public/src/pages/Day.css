@@ -1,0 +1,17 @@
+.day {
+  width: 80%;
+  margin: 0.5em auto;
+}
+
+.heading-2 {
+  font-size: 1.75em;
+  padding: 1em 1em 0 0;
+}
+
+.day-header {
+  color: rgb(97, 97, 97);
+}
+
+.button .day-submit {
+  background-color: #2490e9;
+}

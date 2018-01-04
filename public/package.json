@@ -1,0 +1,38 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@types/jest": "^22.0.0",
+    "@types/node": "^8.0.22",
+    "@types/react": "^16.0.31",
+    "@types/react-dom": "^16.0.3",
+    "@types/react-router-dom": "^4.2.3",
+    "bulma": "^0.6.1",
+    "font-awesome": "^4.7.0",
+    "normalize.css": "^7.0.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-mde": "^2.3.2",
+    "react-router-dom": "^4.2.2",
+    "react-scripts-ts": "2.8.0",
+    "showdown": "^1.8.6"
+  },
+  "scripts": {
+    "start": "react-scripts-ts start",
+    "build": "react-scripts-ts build",
+    "test": "react-scripts-ts test --env=jsdom",
+    "eject": "react-scripts-ts eject"
+  },
+  "proxy": {
+    "/api": {
+      "target": "http://api_server:3001/",
+      "ws": true
+    }
+  },
+  "devDependencies": {
+    "@types/showdown": "^1.7.2",
+    "prettier": "^1.5.3",
+    "tslint-config-prettier": "^1.3.0"
+  }
+}

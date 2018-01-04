@@ -1,0 +1,51 @@
+.mde-header {
+  font-size: 0.8em;
+}
+
+.mde-header-item {
+  margin: none;
+}
+
+.mde-text textarea {
+  display: block;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 200px;
+  padding: 0.75rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
+  box-shadow: none;
+  font-size: 16px;
+  background: 
+    linear-gradient(90deg, #f5e9d6 21px, transparent 1%) center,
+    linear-gradient(#f5e9d6 21px, transparent 1%) center,
+    #383838;
+  background-size: 22px 22px;
+}
+
+.mde-text textarea:focus {
+  outline: none;
+}
+
+.mde-preview .mde-preview-content {
+  margin-top: 8px;
+  padding: 10px 10px;
+  border: none;
+}
+
+.mde-header {
+  opacity: 0.2;
+  transition: opacity 1s;
+}
+
+.mde-header:hover {
+  opacity: 1;
+}
+
+.mde-help {
+  padding: 1em 0 1em 1em;
+  display: flex;
+  justify-content: flex-end;
+  opacity: 0.7;
+}
