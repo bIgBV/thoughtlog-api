@@ -1,6 +1,8 @@
 package database
 
 import (
+	"time"
+
 	"github.com/bIgBV/thoughtlog-api/models"
 	"github.com/go-pg/pg"
 )
@@ -29,4 +31,17 @@ func (s *PostStore) Create(p *models.Post) error {
 	})
 
 	return err
+}
+
+// Get returns posts made by a given user on the given date
+func (s *PostStore) Get(createdDate time.Time) (*[]models.Post, error) {
+	p := models.Post{}
+	var res []models.Post
+
+	err := s.db.Model(&p).
+		Where("created_at > ?", createdDate.Format("2018-01-05")).
+		Where("created_at < ?", createdDate.Format("2018-01-05")).
+		Select(&res)
+
+	return &res, err
 }

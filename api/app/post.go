@@ -3,6 +3,7 @@ package app
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -13,6 +14,7 @@ import (
 // PostStorer defines the database persistance interface for a Post
 type PostStorer interface {
 	Create(p *models.Post) error
+	Get(createdDate time.Time) (*[]models.Post, error)
 }
 
 // PostResource implements all Post handlers
@@ -64,4 +66,22 @@ func (rs *PostResource) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	render.Respond(w, r, newPostResponse(&p))
+}
+
+func (rs *PostResource) get(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var requestedPost models.Post
+	err := decoder.Decode(&requestedPost)
+	if err != nil {
+		render.Respond(w, r, ErrInvalidRequest(err))
+		return
+	}
+
+	storedPost, err := rs.Store.Get(requestedPost.CreatedAt)
+	if err != nil {
+		render.Respond(w, r, ErrInvalidRequest(err))
+		return
+	}
+
+	render.Respond(w, r, &storedPost)
 }
