@@ -29,6 +29,12 @@ func (u *User) BeforeInsert(db orm.DB) error {
 	return u.Validate()
 }
 
+// BeforeUpdate updates the updated at field
+func (u *User) BeforeUpdate(db orm.DB) error {
+	u.UpdatedAt = time.Now()
+	return u.Validate()
+}
+
 // Validate validates a User struct and returns validation errors
 func (u *User) Validate() error {
 	u.Email = strings.TrimSpace(u.Email)
