@@ -22,7 +22,7 @@ func New() (*chi.Mux, error) {
 		return nil, err
 	}
 
-	loginAPI, err := app.NewAPI(db)
+	API, err := app.NewAPI(db)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
@@ -32,7 +32,7 @@ func New() (*chi.Mux, error) {
 
 	r.Use(logging.NewStructuredLogger(logger))
 
-	r.Mount("/auth", loginAPI.Router())
+	r.Mount("/", API.Router())
 
 	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("pong"))

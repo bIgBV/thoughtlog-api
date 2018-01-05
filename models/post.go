@@ -12,7 +12,6 @@ type Post struct {
 	ID        int       `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	Title     string
 	Body      string
 	CreatedBy int `json:"created_by" pg:",fk:User"`
 }
@@ -37,7 +36,6 @@ func (p *Post) BeforeUpdate(db orm.DB) error {
 // Validate checks if the post has a title and a body. Prevents a round trip to the db
 func (p *Post) Validate() error {
 	return validation.ValidateStruct(p,
-		validation.Field(&p.Title, validation.Required),
 		validation.Field(&p.Body, validation.Required),
 	)
 }
