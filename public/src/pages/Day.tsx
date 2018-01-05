@@ -1,8 +1,9 @@
 import * as React from "react";
-import Editor, { Person } from "../components/Editor";
-
 import { ReactMdeTypes } from "react-mde";
 import { RouteComponentProps } from "react-router-dom";
+
+import Editor, { Person } from "../components/Editor";
+import { CreatePost, IsErrResp, IsPostResp } from "../services/HttpService";
 
 import "./Day.css";
 
@@ -39,6 +40,7 @@ interface Params {
 interface DayState {
   editorContent: ReactMdeTypes.Value;
   isSubmitting: boolean;
+  error: string;
 }
 
 class Day extends React.Component<RouteComponentProps<Params>, DayState> {
@@ -48,14 +50,34 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
       editorContent: {
         text: "So how was your day?"
       },
+      error: "",
       isSubmitting: false
     };
 
     this.contentCallback = this.contentCallback.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   public contentCallback(value: ReactMdeTypes.Value) {
     this.setState({ editorContent: value });
+  }
+
+  public handleClick(e: React.SyntheticEvent<HTMLAnchorElement>) {
+    e.stopPropagation();
+    this.setState({ isSubmitting: true });
+
+    CreatePost(
+      this.state.editorContent.text,
+      this.props.match.params.user
+    ).then(data => {
+      if (IsErrResp(data)) {
+        this.setState({ error: data.error, isSubmitting: false });
+        return;
+      }
+      if (IsPostResp(data)) {
+        return;
+      }
+    });
   }
 
   public render() {
@@ -63,19 +85,26 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
     const Bhargav: Person = "Bhargav";
     const Ashima: Person = "Ashima";
 
-    const editors = [Bhargav, Ashima].map(person => (
-      <div className="day-editor column">
-        <Editor
-          content={this.state.editorContent}
-          person={person}
-          loggedInUser={loggedInUser}
-          callback={this.contentCallback}
-        />
-        {loggedInUser.toLowerCase() === person.toLowerCase() ? (
-          <a className="day-submit button is-primary">Submit</a>
-        ) : null}
-      </div>
-    ));
+    const editors = [Bhargav, Ashima].map(person => {
+      const submitClasses = `day-submit button is-primary ${
+        this.state.isSubmitting ? "is-loading" : ""
+      }`;
+      return (
+        <div className="day-editor column" key={person}>
+          <Editor
+            content={this.state.editorContent}
+            person={person}
+            loggedInUser={loggedInUser}
+            callback={this.contentCallback}
+          />
+          {loggedInUser.toLowerCase() === person.toLowerCase() ? (
+            <a className={submitClasses} onClick={this.handleClick}>
+              Submit
+            </a>
+          ) : null}
+        </div>
+      );
+    });
 
     return (
       <div className="day section">

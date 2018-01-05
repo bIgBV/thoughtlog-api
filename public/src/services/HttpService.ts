@@ -70,7 +70,7 @@ export function CreatePost(
   return fetch("http://localhost:3001/post", {
     body: JSON.stringify({
       body,
-      created_by: createdBy
+      created_by: createdBy === "bhargav" ? 1 : 2
     }),
     method: "POST"
   }).then(response => response.json());
