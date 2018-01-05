@@ -12,8 +12,8 @@ type Post struct {
 	ID        int       `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	Body      string
-	CreatedBy int `json:"created_by" pg:",fk:User"`
+	Body      string    `json:"body"`
+	CreatedBy int       `json:"created_by" pg:",fk:User"`
 }
 
 // BeforeInsert sets the created at and inital updated at

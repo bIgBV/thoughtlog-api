@@ -41,6 +41,7 @@ interface DayState {
   editorContent: ReactMdeTypes.Value;
   isSubmitting: boolean;
   error: string;
+  submitted: boolean;
 }
 
 class Day extends React.Component<RouteComponentProps<Params>, DayState> {
@@ -51,7 +52,8 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
         text: "So how was your day?"
       },
       error: "",
-      isSubmitting: false
+      isSubmitting: false,
+      submitted: false
     };
 
     this.contentCallback = this.contentCallback.bind(this);
@@ -75,6 +77,11 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
         return;
       }
       if (IsPostResp(data)) {
+        this.setState({
+          editorContent: { text: data.body },
+          isSubmitting: false,
+          submitted: true
+        });
         return;
       }
     });
@@ -89,15 +96,27 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
       const submitClasses = `day-submit button is-primary ${
         this.state.isSubmitting ? "is-loading" : ""
       }`;
+
+      let isPreview = loggedInUser.toLowerCase() === person.toLowerCase();
+
+      // If the post has been submitted, then switch to preview mode even for the
+      // logged in user
+      if (
+        this.state.submitted &&
+        loggedInUser.toLowerCase() === person.toLowerCase()
+      ) {
+        isPreview = !isPreview;
+      }
+
       return (
         <div className="day-editor column" key={person}>
           <Editor
             content={this.state.editorContent}
             person={person}
-            loggedInUser={loggedInUser}
+            previewMode={isPreview}
             callback={this.contentCallback}
           />
-          {loggedInUser.toLowerCase() === person.toLowerCase() ? (
+          {isPreview ? (
             <a className={submitClasses} onClick={this.handleClick}>
               Submit
             </a>

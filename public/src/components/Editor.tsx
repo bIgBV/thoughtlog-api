@@ -14,7 +14,7 @@ interface EditorState {
 interface EditorProps {
   content: ReactMdeTypes.Value;
   person: Person;
-  loggedInUser: string;
+  previewMode: boolean;
   callback: (value: ReactMdeTypes.Value) => void;
 }
 
@@ -48,15 +48,9 @@ class Editor extends React.Component<EditorProps, EditorState> {
           onChange={this.handleValueChange}
           commands={ReactMdeCommands.getDefaultCommands()}
           visibility={{
-            previewHelp:
-              this.props.person.toLowerCase() ===
-              this.props.loggedInUser.toLowerCase(),
-            textarea:
-              this.props.person.toLowerCase() ===
-              this.props.loggedInUser.toLowerCase(),
-            toolbar:
-              this.props.person.toLowerCase() ===
-              this.props.loggedInUser.toLowerCase()
+            previewHelp: this.props.previewMode,
+            textarea: this.props.previewMode,
+            toolbar: this.props.previewMode
           }}
         />
       </div>
