@@ -15,7 +15,7 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 
 	Email    string `json:"email"`
-	Password string `json:"password"`
+	Password string `json:"password,omitempty"`
 	Name     string `json:"name"`
 }
 

@@ -33,7 +33,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	// Here we dfine our flags and configuration settings.
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.go-base.yaml)")
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.thoughtlog-api.yaml)")
 
 	viper.SetDefault("database_url", "postgres://postgres:postgres@localhost:5432/thoughlog")
 
@@ -50,7 +50,7 @@ func initConfig() {
 			log.Fatal(err)
 		}
 
-		// Search for the config in the home dir with name ".go-base"
+		// Search for the config in the home dir with name ".thoughtlog-api"
 		viper.AddConfigPath(home)
 		viper.SetConfigName(".thought-log")
 	}

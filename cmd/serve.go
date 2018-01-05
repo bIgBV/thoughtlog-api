@@ -23,6 +23,6 @@ var serveCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(serveCmd)
 
-	viper.SetDefault("port", "localhost:3000")
+	viper.SetDefault("port", "localhost:3001")
 	viper.SetDefault("log_level", "debug")
 }

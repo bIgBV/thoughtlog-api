@@ -100,5 +100,8 @@ func (rs *UserResource) post(w http.ResponseWriter, r *http.Request) {
 		Value: u.Name,
 	})
 
+	// Clear password before seiralization
+	u.Password = ""
+
 	render.Respond(w, r, newUserResponse(&u))
 }

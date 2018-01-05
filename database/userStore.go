@@ -20,6 +20,8 @@ func NewUserStore(db *pg.DB) *UserStore {
 // Get returns a user by name. (That's all I need for this application)
 func (s *UserStore) Get(name string) (*auth.User, error) {
 	u := auth.User{Name: name}
-	err := s.db.Select(&u)
+	err := s.db.Model(&u).
+		Where("name = ?", name).
+		Select()
 	return &u, err
 }

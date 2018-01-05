@@ -1,6 +1,8 @@
 import * as React from "react";
 import Editor from "../components/Editor";
 
+import { RouteComponentProps } from "react-router-dom";
+
 import './Day.css';
 
 const DAY_MAP = {
@@ -28,8 +30,8 @@ const MONTH_MAP = {
   11: "December"
 };
 
-class Day extends React.Component<{}, {}> {
-  constructor(props: {}, state: {}) {
+class Day extends React.Component<RouteComponentProps<{}>, {}> {
+  constructor(props: RouteComponentProps<{}>, state: {}) {
     super(props, state);
     this.state = {
       isSubmitting: false

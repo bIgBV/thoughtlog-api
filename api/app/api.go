@@ -29,7 +29,7 @@ func NewAPI(db *pg.DB) (*API, error) {
 func (a *API) Router() *chi.Mux {
 	r := chi.NewRouter()
 
-	r.Mount("/auth", a.User.router())
+	r.Mount("/", a.User.router())
 
 	return r
 }

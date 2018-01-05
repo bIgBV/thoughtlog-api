@@ -9,7 +9,7 @@ import (
 // ErrResponse renderer type encapsulates all API error responses
 type ErrResponse struct {
 	Err            error `json:"-"`
-	HTTPStatusCode int   `json:"-"`
+	HTTPStatusCode int   `json:"status_code"`
 
 	StatusText string `json:"status"`
 	AppCode    int64  `json:"code,omitempty"`

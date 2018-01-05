@@ -14,6 +14,18 @@
   version = "v3.3.2"
 
 [[projects]]
+  name = "github.com/go-chi/cors"
+  packages = ["."]
+  revision = "dba6525398619dead495962a916728e7ee2ca322"
+  version = "v1.0.0"
+
+[[projects]]
+  name = "github.com/go-chi/render"
+  packages = ["."]
+  revision = "9f855fadd4b8cde7773f9ef51f6b2705af239519"
+  version = "v1.0.0"
+
+[[projects]]
   name = "github.com/go-ozzo/ozzo-validation"
   packages = ["."]
   revision = "85dcd8368eba387e65a03488b003e233994e87e9"
@@ -142,6 +154,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9a657407f394e290ca28c5bb7b7172003133d52493047c9bcdc6cd775548d0e8"
+  inputs-digest = "5168bd9d1fd15ba02648ae78bef2eeb1f3d4f6124055d0d0fe00046b12ded27f"
   solver-name = "gps-cdcl"
   solver-version = 1

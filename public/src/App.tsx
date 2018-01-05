@@ -1,12 +1,18 @@
 import * as React from "react";
 import "./App.css";
 
-import { Route } from "react-router-dom";
+import { Redirect, Route } from "react-router-dom";
 
-import Day from './pages/Day';
+import Day from "./pages/Day";
+import Login from "./pages/Login";
 
-class App extends React.Component {
-  constructor(props: {}, state: {}) {
+interface AppProps {
+  isLoggedIn: boolean;
+  loginData?: object;
+}
+
+class App extends React.Component<AppProps, {}> {
+  constructor(props: AppProps, state: {}) {
     super(props, state);
   }
 
@@ -14,9 +20,18 @@ class App extends React.Component {
     return (
       <div className="paper">
         <div className="App conatiner">
-          <Route 
-            path="/day" 
-            component={Day} />
+          <Route
+            path="/"
+            render={() =>
+              this.props.isLoggedIn ? (
+                <Redirect to="/day" />
+              ) : (
+                <Redirect to="/login" />
+              )
+            }
+          />
+          <Route path="/day" component={Day} />
+          <Route path="/login" component={Login} />
         </div>
       </div>
     );

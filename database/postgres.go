@@ -1,21 +1,36 @@
 package database
 
 import (
+	"time"
+
+	log "github.com/sirupsen/logrus"
+
 	"github.com/go-pg/pg"
+	"github.com/spf13/viper"
 )
 
 // DBConn returns a postgres connection pool
 func DBConn() (*pg.DB, error) {
-	opts := pg.Options{
-		User:      "postgres",
-		Password:  "postgres",
-		Addr:      "localhost:5432",
-		TLSConfig: nil,
+	opts, err := pg.ParseURL(viper.GetString("database_url"))
+	if err != nil {
+		return nil, err
 	}
-	db := pg.Connect(&opts)
+	db := pg.Connect(opts)
 	if err := checkConn(db); err != nil {
 		return nil, err
 	}
+
+	db.OnQueryProcessed(func(event *pg.QueryProcessedEvent) {
+		query, err := event.FormattedQuery()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.WithFields(log.Fields{
+			"time":  time.Since(event.StartTime),
+			"query": query,
+		}).Info("Processed query")
+	})
 	return db, nil
 }
 
