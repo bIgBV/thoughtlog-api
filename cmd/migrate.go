@@ -22,6 +22,8 @@ var migrateCmd = &cobra.Command{
 			}
 		}
 
+		log.WithField("args", argsMig).Info("Args to migrate")
+
 		if reset {
 			migrate.Reset()
 		}

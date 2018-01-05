@@ -6,15 +6,15 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/go-chi/render"
+	"github.com/bIgBV/thoughtlog-api/models"
 
-	"github.com/bIgBV/thoughtlog-api/auth"
 	"github.com/go-chi/chi"
+	"github.com/go-chi/render"
 )
 
 // UserStore defines database operations for a User
 type UserStore interface {
-	Get(name string) (*auth.User, error)
+	Get(name string) (*models.User, error)
 }
 
 // UserResource implements user management handler
@@ -58,7 +58,7 @@ func (rs *UserResource) accountCtx(next http.Handler) http.Handler {
 }
 
 type userRequest struct {
-	*auth.User
+	*models.User
 }
 
 func (u *userRequest) Bind(r *http.Request) error {
@@ -66,18 +66,18 @@ func (u *userRequest) Bind(r *http.Request) error {
 }
 
 type userResponse struct {
-	*auth.User
+	*models.User
 	StatusCode int32 `json:"status_code"`
 }
 
-func newUserResponse(u *auth.User) *userResponse {
+func newUserResponse(u *models.User) *userResponse {
 	resp := &userResponse{User: u, StatusCode: http.StatusAccepted}
 	return resp
 }
 
 func (rs *UserResource) post(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
-	var u auth.User
+	var u models.User
 	err := decoder.Decode(&u)
 	if err != nil {
 		render.Respond(w, r, ErrInvalidRequest(err))
