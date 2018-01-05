@@ -61,9 +61,14 @@ export default class Login extends React.Component<LoginProps, LoginState> {
   }
 
   public render() {
+    const genTimeStamp = () => {
+        const now = new Date();
+        return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+    };
+
     if (this.state.isLoggedIn) {
       return (
-        <Redirect to={`/day/${this.state.username}/${new Date().getTime()}`} />
+        <Redirect to={`/day/${this.state.username}/${genTimeStamp()}`} />
       );
     }
 

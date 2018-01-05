@@ -1,5 +1,5 @@
 import * as React from "react";
-import Editor from "../components/Editor";
+import Editor, { Person } from "../components/Editor";
 
 import { RouteComponentProps } from "react-router-dom";
 
@@ -30,8 +30,13 @@ const MONTH_MAP = {
   11: "December"
 };
 
-class Day extends React.Component<RouteComponentProps<{}>, {}> {
-  constructor(props: RouteComponentProps<{}>, state: {}) {
+interface Params {
+  user: string;
+  date: string;
+}
+
+class Day extends React.Component<RouteComponentProps<Params>, {}> {
+  constructor(props: RouteComponentProps<Params>, state: {}) {
     super(props, state);
     this.state = {
       isSubmitting: false
@@ -39,19 +44,27 @@ class Day extends React.Component<RouteComponentProps<{}>, {}> {
   }
 
   public render() {
+    const loggedInUser = this.props.match.params.user;
+    const Bhargav: Person = "Bhargav";
+    const Ashima: Person = "Ashima";
+
+    const editors = [Bhargav, Ashima].map(person => (
+      <div className="day-editor column">
+        <Editor
+          text="Tell me about your day.."
+          person={person}
+          loggedInUser={this.props.match.params.user}
+        />
+        {loggedInUser.toLowerCase() === person.toLowerCase() ? (
+          <a className="day-submit button is-primary">Submit</a>
+        ) : null}
+      </div>
+    ));
+
     return (
       <div className="day section">
         <div className="day-header title">{this.getDateString()}</div>
-        <div className="columns">
-          <div className="day-editor column">
-            <Editor text="Tell me about your day.." personName="Bhargav" />
-            <a className="day-submit button is-primary">Submit</a>
-          </div>
-          <div className="day-editor column">
-            <Editor text="Tell me about your day.." personName="Ashima" />
-            <a className="day-submit button is-primary">Submit</a>
-          </div>
-        </div>
+        <div className="columns">{editors}</div>
       </div>
     );
   }
