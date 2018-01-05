@@ -14,20 +14,17 @@ interface LoginState {
 }
 
 interface LoginProps extends RouteComponentProps<{}> {
-    callback: (value: boolean) => void;
-    isLoggedIn: boolean;
+  callback: (value: boolean) => void;
+  isLoggedIn: boolean;
 }
 
-export default class Login extends React.Component<
-  LoginProps,
-  LoginState
-> {
+export default class Login extends React.Component<LoginProps, LoginState> {
   constructor(props: LoginProps, state: LoginState) {
     super(props, state);
 
     this.state = {
       error: "",
-      isLoggedIn: this.props.isLoggedIn,
+    isLoggedIn: this.props.isLoggedIn || false,
       isSubmitting: false,
       password: "",
       username: ""
@@ -55,9 +52,9 @@ export default class Login extends React.Component<
           this.setState({ error: data.error });
           return;
         }
-        if (data.status_code === 202 ) {
-            this.props.callback(true);
-            this.setState({isLoggedIn: true});
+        if (data.status_code === 202) {
+          this.props.callback(true);
+          this.setState({ isLoggedIn: true });
         }
       })
       .catch((err: Error) => this.setState({ error: err.message }));
@@ -65,9 +62,9 @@ export default class Login extends React.Component<
 
   public render() {
     if (this.state.isLoggedIn) {
-        return (
-            <Redirect to={`/day/${this.state.username}/${new Date().getTime()}`} />
-        );
+      return (
+        <Redirect to={`/day/${this.state.username}/${new Date().getTime()}`} />
+      );
     }
 
     const btnClasses = `button is-primary ${
@@ -105,9 +102,7 @@ export default class Login extends React.Component<
                 </div>
               </div>
               {this.state.error === "" ? null : (
-                <div className="notification is-danger">
-                  {this.state.error}
-                </div>
+                <div className="notification is-danger">{this.state.error}</div>
               )}
               <div className="control">
                 <button className={btnClasses} onClick={this.handleClick}>

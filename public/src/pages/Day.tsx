@@ -3,7 +3,7 @@ import Editor from "../components/Editor";
 
 import { RouteComponentProps } from "react-router-dom";
 
-import './Day.css';
+import "./Day.css";
 
 const DAY_MAP = {
   0: "Sunday",
@@ -41,25 +41,15 @@ class Day extends React.Component<RouteComponentProps<{}>, {}> {
   public render() {
     return (
       <div className="day section">
-        <div className="day-header title">
-          {this.getDateString()}
-        </div>
+        <div className="day-header title">{this.getDateString()}</div>
         <div className="columns">
           <div className="day-editor column">
-            <Editor
-              text="Tell me about your day.." 
-              personName="Bhargav"/>
-            <a className="day-submit button is-primary">
-              Submit
-            </a>
+            <Editor text="Tell me about your day.." personName="Bhargav" />
+            <a className="day-submit button is-primary">Submit</a>
           </div>
           <div className="day-editor column">
-            <Editor 
-              text="Tell me about your day.." 
-              personName="Ashima"/>
-            <a className="day-submit button is-primary">
-              Submit
-            </a>
+            <Editor text="Tell me about your day.." personName="Ashima" />
+            <a className="day-submit button is-primary">Submit</a>
           </div>
         </div>
       </div>
@@ -68,7 +58,9 @@ class Day extends React.Component<RouteComponentProps<{}>, {}> {
 
   private getDateString() {
     const today = new Date();
-    return `${DAY_MAP[today.getDay()]}, ${today.getDate()} ${MONTH_MAP[today.getMonth()]}, ${today.getFullYear()}`;
+    return `${DAY_MAP[today.getDay()]}, ${today.getDate()} ${
+      MONTH_MAP[today.getMonth()]
+    }, ${today.getFullYear()}`;
   }
 }
 
