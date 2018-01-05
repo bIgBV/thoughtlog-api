@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/bIgBV/thoughtlog-api/database/migrate"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
