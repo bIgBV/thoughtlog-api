@@ -1,26 +1,33 @@
-import { History } from "history";
 import * as React from "react";
+import { Redirect, RouteComponentProps } from "react-router-dom";
 
 import { AuthLogin } from "../services/HttpService";
 
 import "./Login.css";
 
-interface AppState {
+interface LoginState {
   username: string;
   password: string;
   isSubmitting: boolean;
   error: string | null;
+  isLoggedIn: boolean;
+}
+
+interface LoginProps extends RouteComponentProps<{}> {
+    callback: (value: boolean) => void;
+    isLoggedIn: boolean;
 }
 
 export default class Login extends React.Component<
-  { history: History },
-  AppState
+  LoginProps,
+  LoginState
 > {
-  constructor(props: { history: History }, state: AppState) {
+  constructor(props: LoginProps, state: LoginState) {
     super(props, state);
 
     this.state = {
       error: "",
+      isLoggedIn: this.props.isLoggedIn,
       isSubmitting: false,
       password: "",
       username: ""
@@ -44,16 +51,25 @@ export default class Login extends React.Component<
         /* tslint:disable */
         console.log(data);
         /* tslint:enable */
-        if (data.status_code && data.status_code > 400) {
+        if (data.status_code > 400) {
           this.setState({ error: data.error });
           return;
         }
-        this.props.history.push(`/day?user=${data.name}`);
+        if (data.status_code === 202 ) {
+            this.props.callback(true);
+            this.setState({isLoggedIn: true});
+        }
       })
       .catch((err: Error) => this.setState({ error: err.message }));
   }
 
   public render() {
+    if (this.state.isLoggedIn) {
+        return (
+            <Redirect to={`/day/${this.state.username}/${new Date().getTime()}`} />
+        );
+    }
+
     const btnClasses = `button is-primary ${
       this.state.isSubmitting ? "is-loading" : ""
     }`;

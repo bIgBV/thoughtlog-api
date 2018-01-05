@@ -67,10 +67,11 @@ func (u *userRequest) Bind(r *http.Request) error {
 
 type userResponse struct {
 	*auth.User
+	StatusCode int32 `json:"status_code"`
 }
 
 func newUserResponse(u *auth.User) *userResponse {
-	resp := &userResponse{User: u}
+	resp := &userResponse{User: u, StatusCode: http.StatusAccepted}
 	return resp
 }
 
