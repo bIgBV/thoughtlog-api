@@ -12,9 +12,10 @@ interface EditorState {
 }
 
 interface EditorProps {
-  text: string;
+  content: ReactMdeTypes.Value;
   person: Person;
   loggedInUser: string;
+  callback: (value: ReactMdeTypes.Value) => void;
 }
 
 class Editor extends React.Component<EditorProps, EditorState> {
@@ -26,18 +27,12 @@ class Editor extends React.Component<EditorProps, EditorState> {
         text: ""
       }
     };
-  }
 
-  public componentDidMount() {
-    this.setState({
-      content: {
-        text: this.props.text
-      }
-    });
+    this.handleValueChange = this.handleValueChange.bind(this);
   }
 
   public handleValueChange = (value: ReactMdeTypes.Value) => {
-    this.setState({ content: value });
+    this.props.callback(value);
   };
 
   public render() {
@@ -49,7 +44,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
             id: "ta1",
             name: "ta1"
           }}
-          value={this.state.content}
+          value={this.props.content}
           onChange={this.handleValueChange}
           commands={ReactMdeCommands.getDefaultCommands()}
           visibility={{

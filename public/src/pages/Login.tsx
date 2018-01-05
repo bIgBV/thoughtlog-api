@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Redirect, RouteComponentProps } from "react-router-dom";
 
-import { AuthLogin } from "../services/HttpService";
+import { AuthLogin, IsErrResp, IsUserResp } from "../services/HttpService";
 
 import "./Login.css";
 
@@ -24,7 +24,7 @@ export default class Login extends React.Component<LoginProps, LoginState> {
 
     this.state = {
       error: "",
-    isLoggedIn: this.props.isLoggedIn || false,
+      isLoggedIn: this.props.isLoggedIn || false,
       isSubmitting: false,
       password: "",
       username: ""
@@ -48,11 +48,11 @@ export default class Login extends React.Component<LoginProps, LoginState> {
         /* tslint:disable */
         console.log(data);
         /* tslint:enable */
-        if (data.status_code > 400) {
-          this.setState({ error: data.error });
+        if (IsErrResp(data)) {
+          this.setState({ error: data.error, isSubmitting: false });
           return;
         }
-        if (data.status_code === 202) {
+        if (IsUserResp(data)) {
           this.props.callback(true);
           this.setState({ isLoggedIn: true });
         }
@@ -62,14 +62,12 @@ export default class Login extends React.Component<LoginProps, LoginState> {
 
   public render() {
     const genTimeStamp = () => {
-        const now = new Date();
-        return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+      const now = new Date();
+      return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
     };
 
     if (this.state.isLoggedIn) {
-      return (
-        <Redirect to={`/day/${this.state.username}/${genTimeStamp()}`} />
-      );
+      return <Redirect to={`/day/${this.state.username}/${genTimeStamp()}`} />;
     }
 
     const btnClasses = `button is-primary ${
