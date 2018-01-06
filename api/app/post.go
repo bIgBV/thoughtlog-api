@@ -3,6 +3,7 @@ package app
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/go-chi/chi"
@@ -32,6 +33,7 @@ func NewPostResource(store PostStorer) *PostResource {
 func (rs *PostResource) router() *chi.Mux {
 	r := chi.NewRouter()
 	r.Post("/", rs.post)
+	r.Get("/", rs.get)
 	return r
 }
 
@@ -69,15 +71,16 @@ func (rs *PostResource) post(w http.ResponseWriter, r *http.Request) {
 }
 
 func (rs *PostResource) get(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	var requestedPost models.Post
-	err := decoder.Decode(&requestedPost)
+	tsStr := chi.URLParam(r, "timestamp")
+	i, err := strconv.ParseInt(tsStr, 10, 64)
 	if err != nil {
 		render.Respond(w, r, ErrInvalidRequest(err))
 		return
 	}
 
-	storedPost, err := rs.Store.Get(requestedPost.CreatedAt)
+	timeStamp := time.Unix(i, 0)
+
+	storedPost, err := rs.Store.Get(timeStamp)
 	if err != nil {
 		render.Respond(w, r, ErrInvalidRequest(err))
 		return

@@ -3,7 +3,13 @@ import { ReactMdeTypes } from "react-mde";
 import { RouteComponentProps } from "react-router-dom";
 
 import Editor, { Person } from "../components/Editor";
-import { CreatePost, IsErrResp, IsPostResp } from "../services/HttpService";
+import {
+  CreatePost,
+  GetPost,
+  IsErrResp,
+  IsPostResp,
+  PostResponse
+} from "../services/HttpService";
 
 import "./Day.css";
 
@@ -42,6 +48,7 @@ interface DayState {
   isSubmitting: boolean;
   error: string;
   submitted: boolean;
+  fetchedContent: PostResponse[];
 }
 
 class Day extends React.Component<RouteComponentProps<Params>, DayState> {
@@ -52,12 +59,29 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
         text: "So how was your day?"
       },
       error: "",
+      fetchedContent: [],
       isSubmitting: false,
       submitted: false
     };
 
     this.contentCallback = this.contentCallback.bind(this);
     this.handleClick = this.handleClick.bind(this);
+  }
+
+  public componentDidMount() {
+    GetPost(this.props.match.params.date).then(data => {
+      if (IsErrResp(data)) {
+        this.setState({
+          error: data.error
+        });
+        return;
+      }
+      if (data.length > 1 && IsPostResp(data[0])) {
+        this.setState({
+          fetchedContent: data
+        });
+      }
+    });
   }
 
   public contentCallback(value: ReactMdeTypes.Value) {

@@ -75,3 +75,14 @@ export function CreatePost(
     method: "POST"
   }).then(response => response.json());
 }
+
+export function GetPost(
+  timestamp: string
+): Promise<PostResponse[] | ErrorResponse> {
+  const convertedTimestamp = Math.floor(parseInt(timestamp, 10) / 1000);
+
+  return fetch(`http://localhost:3001/post/${convertedTimestamp}`, {
+    body: undefined,
+    method: "GET"
+  }).then(response => response.json());
+}

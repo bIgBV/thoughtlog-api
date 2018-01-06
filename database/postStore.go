@@ -39,8 +39,8 @@ func (s *PostStore) Get(createdDate time.Time) (*[]models.Post, error) {
 	var res []models.Post
 
 	err := s.db.Model(&p).
-		Where("created_at > ?", createdDate.Format("2018-01-05")).
-		Where("created_at < ?", createdDate.Format("2018-01-05")).
+		Where("created_at::date > date ?", createdDate.AddDate(0, 0, -1).Format("2006-01-2")).
+		Where("created_at::date <= date ?", createdDate.Format("2006-01-2")).
 		Select(&res)
 
 	return &res, err

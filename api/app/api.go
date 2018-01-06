@@ -35,6 +35,6 @@ func (a *API) Router() *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Mount("/auth", a.User.router())
-	r.Mount("/post", a.Post.router())
+	r.Mount("/post/{timestamp}", a.Post.router())
 	return r
 }
