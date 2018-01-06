@@ -102,7 +102,6 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
       }
       if (IsPostResp(data)) {
         this.setState({
-          editorContent: { text: data.body },
           isSubmitting: false,
           submitted: true
         });

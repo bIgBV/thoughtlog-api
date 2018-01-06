@@ -1,5 +1,10 @@
 import { Person } from "../components/Editor";
 
+interface APIResponse<T> {
+  data: T[];
+  status_code: number;
+}
+
 export interface ErrorResponse {
   status_code: number;
   status: string;
@@ -15,7 +20,7 @@ export interface UserResponse {
   email: string;
 }
 
-export interface PostResponse {
+export interface Post {
   status_code: number;
   id: number;
   body: string;
@@ -23,6 +28,8 @@ export interface PostResponse {
   updated_at: string;
   created_by: number;
 }
+
+export interface PostResponse extends APIResponse<Post> {}
 
 /* tslint:disable */
 export function IsErrResp(object: any): object is ErrorResponse {
@@ -34,7 +41,7 @@ export function IsUserResp(object: any): object is UserResponse {
 }
 
 export function IsPostResp(object: any): object is PostResponse {
-  return "body" in object;
+  return object.data.length >= 0;
 }
 /* tslint:enable */
 
@@ -67,10 +74,10 @@ export function CreatePost(
   body: string,
   createdBy: Person
 ): Promise<ErrorResponse | PostResponse> {
-  return fetch("http://localhost:3001/post", {
+  return fetch("http://localhost:3001/post/1983718391", {
     body: JSON.stringify({
       body,
-      created_by: createdBy === "bhargav" ? 1 : 2
+      created_by: createdBy === "bhargav" ? 0 : 1
     }),
     method: "POST"
   }).then(response => response.json());

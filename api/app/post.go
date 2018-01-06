@@ -42,13 +42,13 @@ type postRequest struct {
 }
 
 type postResponse struct {
-	*models.Post
-	StatusCode int32 `json:"status_code"`
+	Data       *[]models.Post `json:"data"`
+	StatusCode int32          `json:"status_code"`
 }
 
 func newPostResponse(p *models.Post) *postResponse {
 	return &postResponse{
-		Post:       p,
+		Data:       &[]models.Post{*p},
 		StatusCode: http.StatusCreated,
 	}
 }
@@ -86,5 +86,13 @@ func (rs *PostResource) get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	render.Respond(w, r, &storedPost)
+	// initialise an empty slice if no results were returned
+	if len(*storedPost) == 0 {
+		storedPost = &[]models.Post{}
+	}
+
+	render.Respond(w, r, &postResponse{
+		Data:       storedPost,
+		StatusCode: http.StatusOK,
+	})
 }
