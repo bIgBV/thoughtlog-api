@@ -1,5 +1,4 @@
 import * as React from "react";
-import { ReactMdeTypes } from "react-mde";
 import { RouteComponentProps } from "react-router-dom";
 
 import Editor, { Person } from "../components/Editor";
@@ -8,10 +7,15 @@ import {
   GetPost,
   IsErrResp,
   IsPostResp,
-  PostResponse
+  Post
 } from "../services/HttpService";
 
 import "./Day.css";
+
+import { Value } from "react-mde/lib/definitions/types";
+
+const Bhargav: Person = "Bhargav";
+const Ashima: Person = "Ashima";
 
 const DAY_MAP = {
   0: "Sunday",
@@ -44,11 +48,11 @@ interface Params {
 }
 
 interface DayState {
-  editorContent: ReactMdeTypes.Value;
+  editorContent: Value;
   isSubmitting: boolean;
   error: string;
   submitted: boolean;
-  fetchedContent: PostResponse[];
+  fetchedContent: Post[];
 }
 
 class Day extends React.Component<RouteComponentProps<Params>, DayState> {
@@ -76,15 +80,15 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
         });
         return;
       }
-      if (data.length > 1 && IsPostResp(data[0])) {
+      if (data.data.length > 0 && IsPostResp(data[0])) {
         this.setState({
-          fetchedContent: data
+          fetchedContent: data.data
         });
       }
     });
   }
 
-  public contentCallback(value: ReactMdeTypes.Value) {
+  public contentCallback(value: Value) {
     this.setState({ editorContent: value });
   }
 
@@ -112,48 +116,62 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
 
   public render() {
     const loggedInUser = this.props.match.params.user;
-    const Bhargav: Person = "Bhargav";
-    const Ashima: Person = "Ashima";
+    const fetchedContent = this.state.fetchedContent;
 
-    const editors = [Bhargav, Ashima].map(person => {
-      const submitClasses = `day-submit button is-primary ${
-        this.state.isSubmitting ? "is-loading" : ""
-      }`;
-
-      let isPreview = loggedInUser.toLowerCase() === person.toLowerCase();
-
-      // If the post has been submitted, then switch to preview mode even for the
-      // logged in user
-      if (
-        this.state.submitted &&
-        loggedInUser.toLowerCase() === person.toLowerCase()
-      ) {
-        isPreview = !isPreview;
-      }
-
-      return (
-        <div className="day-editor column" key={person}>
-          <Editor
-            content={this.state.editorContent}
-            person={person}
-            previewMode={isPreview}
-            callback={this.contentCallback}
-          />
-          {isPreview ? (
-            <a className={submitClasses} onClick={this.handleClick}>
-              Submit
-            </a>
-          ) : null}
-        </div>
-      );
-    });
-
-    return (
-      <div className="day section">
-        <div className="day-header title">{this.getDateString()}</div>
-        <div className="columns">{editors}</div>
-      </div>
-    );
+    /* tslint:disable */
+    switch (mode(loggedInUser, fetchedContent)) {
+      case EditorMode.BE:
+        return (
+          <div className="day section">
+            <div className="day-header title">{this.getDateString()}</div>
+            <div className="columns">
+              <BEditAEdit
+                onClick={this.contentCallback}
+                onSubmit={this.handleClick}
+              />
+            </div>
+          </div>
+        );
+      case EditorMode.BeAp:
+        return (
+          <div className="day section">
+            <div className="day-header title">{this.getDateString()}</div>
+            <div className="columns">
+              <BEditAPreview
+                fetchedContent={fetchedContent[0].body}
+                onClick={this.contentCallback}
+                onSubmit={this.handleClick}
+              />
+            </div>
+          </div>
+        );
+      case EditorMode.BpAe:
+        return (
+          <div className="day section">
+            <div className="day-header title">{this.getDateString()}</div>
+            <div className="columns">
+              <BPreviewAEdit
+                fetchedContent={fetchedContent[0].body}
+                onClick={this.contentCallback}
+                onSubmit={this.handleClick}
+              />
+            </div>
+          </div>
+        );
+      case EditorMode.BP:
+        return (
+          <div className="day section">
+            <div className="day-header title">{this.getDateString()}</div>
+            <div className="columns">
+              <BPreviewAPreview
+                onClick={this.contentCallback}
+                onSubmit={this.handleClick}
+              />
+            </div>
+          </div>
+        );
+    }
+    /* tslint:enable */
   }
 
   private getDateString() {
@@ -165,3 +183,129 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
 }
 
 export default Day;
+
+interface EditorBlockProps {
+  person: Person;
+  content: Value;
+  previewMode: boolean;
+  onClick: (e: Value) => void;
+  onSubmit: (e: React.SyntheticEvent<HTMLAnchorElement>) => void;
+}
+
+const EditorBlock: React.StatelessComponent<EditorBlockProps> = props => (
+  <div className="day-editor column" key={props.person}>
+    <Editor
+      content={props.content}
+      person={props.person}
+      previewMode={props.previewMode}
+      callback={props.onClick}
+    />
+    {!props.previewMode ? (
+      <a className="button is-primary" onClick={props.onSubmit}>
+        Submit
+      </a>
+    ) : null}
+  </div>
+);
+
+interface BaseProps {
+  onClick: (e: Value) => void;
+  onSubmit: (e: React.SyntheticEvent<HTMLAnchorElement>) => void;
+}
+
+const BEditAEdit: React.StatelessComponent<BaseProps> = props => (
+  <React.Fragment>
+    <EditorBlock
+      content={{ text: "How was your day?" }}
+      person={Bhargav}
+      previewMode={false}
+      onClick={props.onClick}
+      onSubmit={props.onSubmit}
+    />
+    <EditorBlock
+      content={{ text: "How was your day?" }}
+      person={Ashima}
+      previewMode={false}
+      onClick={props.onClick}
+      onSubmit={props.onSubmit}
+    />
+  </React.Fragment>
+);
+
+const BPreviewAPreview: React.StatelessComponent<BaseProps> = props => (
+  <React.Fragment>
+    <EditorBlock
+      content={{ text: "" }}
+      person={Bhargav}
+      previewMode={true}
+      onClick={props.onClick}
+      onSubmit={props.onSubmit}
+    />
+    <EditorBlock
+      content={{ text: "" }}
+      person={Ashima}
+      previewMode={true}
+      onClick={props.onClick}
+      onSubmit={props.onSubmit}
+    />
+  </React.Fragment>
+);
+
+interface SinglePreviewProps extends BaseProps {
+  fetchedContent: string;
+}
+
+const BEditAPreview: React.StatelessComponent<SinglePreviewProps> = props => (
+  <React.Fragment>
+    <EditorBlock
+      content={{ text: "How was your day" }}
+      person={Bhargav}
+      previewMode={false}
+      onClick={props.onClick}
+      onSubmit={props.onSubmit}
+    />
+    <EditorBlock
+      content={{ text: props.fetchedContent }}
+      person={Ashima}
+      previewMode={true}
+      onClick={props.onClick}
+      onSubmit={props.onSubmit}
+    />
+  </React.Fragment>
+);
+
+const BPreviewAEdit: React.StatelessComponent<SinglePreviewProps> = props => (
+  <React.Fragment>
+    <EditorBlock
+      content={{ text: props.fetchedContent }}
+      person={Bhargav}
+      previewMode={true}
+      onClick={props.onClick}
+      onSubmit={props.onSubmit}
+    />
+    <EditorBlock
+      content={{ text: props.fetchedContent }}
+      person={Ashima}
+      previewMode={true}
+      onClick={props.onClick}
+      onSubmit={props.onSubmit}
+    />
+  </React.Fragment>
+);
+
+enum EditorMode {
+  BP,
+  BeAp,
+  BpAe,
+  BE
+}
+
+function mode(loggedInUser: string, fetchedContent: Post[]): EditorMode {
+  if (fetchedContent.length === 0) {
+    return EditorMode.BE;
+  }
+  if (fetchedContent.length === 2) {
+    return EditorMode.BP;
+  }
+  return fetchedContent[0].created_by === 0 ? EditorMode.BpAe : EditorMode.BeAp;
+}

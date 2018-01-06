@@ -15,7 +15,7 @@ interface EditorProps {
   content: ReactMdeTypes.Value;
   person: Person;
   previewMode: boolean;
-  callback: (value: ReactMdeTypes.Value) => void;
+  callback?: (value: ReactMdeTypes.Value) => void;
 }
 
 class Editor extends React.Component<EditorProps, EditorState> {
@@ -32,7 +32,9 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   public handleValueChange = (value: ReactMdeTypes.Value) => {
-    this.props.callback(value);
+    if (this.props.callback) {
+      this.props.callback(value);
+    }
   };
 
   public render() {
@@ -48,9 +50,9 @@ class Editor extends React.Component<EditorProps, EditorState> {
           onChange={this.handleValueChange}
           commands={ReactMdeCommands.getDefaultCommands()}
           visibility={{
-            previewHelp: this.props.previewMode,
-            textarea: this.props.previewMode,
-            toolbar: this.props.previewMode
+            previewHelp: !this.props.previewMode,
+            textarea: !this.props.previewMode,
+            toolbar: !this.props.previewMode
           }}
         />
       </div>

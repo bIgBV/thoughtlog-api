@@ -41,7 +41,7 @@ export function IsUserResp(object: any): object is UserResponse {
 }
 
 export function IsPostResp(object: any): object is PostResponse {
-  return object.data.length >= 0;
+  return "body" in object;
 }
 /* tslint:enable */
 
@@ -85,7 +85,7 @@ export function CreatePost(
 
 export function GetPost(
   timestamp: string
-): Promise<PostResponse[] | ErrorResponse> {
+): Promise<PostResponse | ErrorResponse> {
   const convertedTimestamp = Math.floor(parseInt(timestamp, 10) / 1000);
 
   return fetch(`http://localhost:3001/post/${convertedTimestamp}`, {
