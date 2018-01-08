@@ -32,6 +32,26 @@ func ErrInvalidRequest(err error) render.Renderer {
 	}
 }
 
+// ErrInvalidData is for notifying that a post already exists
+func ErrInvalidData(err error) render.Renderer {
+	return &ErrResponse{
+		Err:            err,
+		HTTPStatusCode: http.StatusBadRequest,
+		StatusText:     http.StatusText(http.StatusBadRequest),
+		ErrorText:      err.Error(),
+	}
+}
+
+// ErrINternalError returns an internal server error
+func ErrInternalError(err error) render.Renderer {
+	return &ErrResponse{
+		HTTPStatusCode: http.StatusInternalServerError,
+		StatusText:     http.StatusText(http.StatusInternalServerError),
+		ErrorText:      err.Error(),
+	}
+
+}
+
 var (
 	// ErrUnauthorized returns 401 unauthorized
 	ErrUnauthorized = &ErrResponse{

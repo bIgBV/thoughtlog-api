@@ -48,6 +48,8 @@ interface Params {
 }
 
 interface DayState {
+  ashimaContent: Value;
+  bhargavContent: Value;
   editorContent: Value;
   isSubmitting: boolean;
   error: string;
@@ -59,6 +61,12 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
   constructor(props: RouteComponentProps<Params>, state: {}) {
     super(props, state);
     this.state = {
+      ashimaContent: {
+        text: ""
+      },
+      bhargavContent: {
+        text: ""
+      },
       editorContent: {
         text: "So how was your day?"
       },
@@ -80,7 +88,43 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
         });
         return;
       }
-      if (data.data.length > 0 && IsPostResp(data[0])) {
+      if (data.data.length > 0 && IsPostResp(data.data[0])) {
+        switch (mode(this.props.match.params.user, data.data)) {
+          case EditorMode.BeAp:
+            this.setState({
+              ashimaContent: {
+                text: data.data[0].body
+              }
+            });
+            break;
+          case EditorMode.BpAe:
+            this.setState({
+              bhargavContent: {
+                text: data.data[0].body
+              }
+            });
+            break;
+          case EditorMode.BP: {
+            const bhargavContent = data.data.filter(
+              post => post.created_by === 0
+            )[0];
+            const ashimaContent = data.data.filter(
+              post => post.created_by === 1
+            )[0];
+
+            this.setState({
+              ashimaContent: {
+                text: ashimaContent.body
+              },
+              bhargavContent: {
+                text: bhargavContent.body
+              }
+            });
+            break;
+          }
+          default:
+            break;
+        }
         this.setState({
           fetchedContent: data.data
         });
@@ -104,7 +148,7 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
         this.setState({ error: data.error, isSubmitting: false });
         return;
       }
-      if (IsPostResp(data)) {
+      if (IsPostResp(data[0])) {
         this.setState({
           isSubmitting: false,
           submitted: true
@@ -126,6 +170,8 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
             <div className="day-header title">{this.getDateString()}</div>
             <div className="columns">
               <BEditAEdit
+                editorContent={this.state.editorContent}
+                loggedInUser={loggedInUser}
                 onClick={this.contentCallback}
                 onSubmit={this.handleClick}
               />
@@ -138,7 +184,9 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
             <div className="day-header title">{this.getDateString()}</div>
             <div className="columns">
               <BEditAPreview
-                fetchedContent={fetchedContent[0].body}
+                editorContent={this.state.editorContent}
+                ashimaContent={this.state.ashimaContent}
+                loggedInUser={loggedInUser}
                 onClick={this.contentCallback}
                 onSubmit={this.handleClick}
               />
@@ -151,7 +199,9 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
             <div className="day-header title">{this.getDateString()}</div>
             <div className="columns">
               <BPreviewAEdit
-                fetchedContent={fetchedContent[0].body}
+                editorContent={this.state.editorContent}
+                bhargavContent={this.state.bhargavContent}
+                loggedInUser={loggedInUser}
                 onClick={this.contentCallback}
                 onSubmit={this.handleClick}
               />
@@ -164,6 +214,10 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
             <div className="day-header title">{this.getDateString()}</div>
             <div className="columns">
               <BPreviewAPreview
+                ashimaContent={this.state.ashimaContent}
+                bhargavContent={this.state.bhargavContent}
+                editorContent={this.state.editorContent}
+                loggedInUser={loggedInUser}
                 onClick={this.contentCallback}
                 onSubmit={this.handleClick}
               />
@@ -200,15 +254,19 @@ const EditorBlock: React.StatelessComponent<EditorBlockProps> = props => (
       previewMode={props.previewMode}
       callback={props.onClick}
     />
-    {!props.previewMode ? (
+    {!props.previewMode ? null : (
       <a className="button is-primary" onClick={props.onSubmit}>
         Submit
       </a>
-    ) : null}
+    )}
   </div>
 );
 
 interface BaseProps {
+  ashimaContent?: Value;
+  bhargavContent?: Value;
+  editorContent: Value;
+  loggedInUser: Person;
   onClick: (e: Value) => void;
   onSubmit: (e: React.SyntheticEvent<HTMLAnchorElement>) => void;
 }
@@ -216,16 +274,16 @@ interface BaseProps {
 const BEditAEdit: React.StatelessComponent<BaseProps> = props => (
   <React.Fragment>
     <EditorBlock
-      content={{ text: "How was your day?" }}
+      content={props.editorContent}
       person={Bhargav}
-      previewMode={false}
+      previewMode={props.loggedInUser.toLowerCase() === Bhargav.toLowerCase()}
       onClick={props.onClick}
       onSubmit={props.onSubmit}
     />
     <EditorBlock
-      content={{ text: "How was your day?" }}
+      content={props.editorContent}
       person={Ashima}
-      previewMode={false}
+      previewMode={props.loggedInUser.toLowerCase() === Ashima.toLowerCase()}
       onClick={props.onClick}
       onSubmit={props.onSubmit}
     />
@@ -235,14 +293,14 @@ const BEditAEdit: React.StatelessComponent<BaseProps> = props => (
 const BPreviewAPreview: React.StatelessComponent<BaseProps> = props => (
   <React.Fragment>
     <EditorBlock
-      content={{ text: "" }}
+      content={props.bhargavContent ? props.bhargavContent : { text: "" }}
       person={Bhargav}
       previewMode={true}
       onClick={props.onClick}
       onSubmit={props.onSubmit}
     />
     <EditorBlock
-      content={{ text: "" }}
+      content={props.ashimaContent ? props.ashimaContent : { text: "" }}
       person={Ashima}
       previewMode={true}
       onClick={props.onClick}
@@ -251,21 +309,17 @@ const BPreviewAPreview: React.StatelessComponent<BaseProps> = props => (
   </React.Fragment>
 );
 
-interface SinglePreviewProps extends BaseProps {
-  fetchedContent: string;
-}
-
-const BEditAPreview: React.StatelessComponent<SinglePreviewProps> = props => (
+const BEditAPreview: React.StatelessComponent<BaseProps> = props => (
   <React.Fragment>
     <EditorBlock
-      content={{ text: "How was your day" }}
+      content={props.editorContent}
       person={Bhargav}
       previewMode={false}
       onClick={props.onClick}
       onSubmit={props.onSubmit}
     />
     <EditorBlock
-      content={{ text: props.fetchedContent }}
+      content={props.ashimaContent ? props.ashimaContent : { text: "" }}
       person={Ashima}
       previewMode={true}
       onClick={props.onClick}
@@ -274,19 +328,19 @@ const BEditAPreview: React.StatelessComponent<SinglePreviewProps> = props => (
   </React.Fragment>
 );
 
-const BPreviewAEdit: React.StatelessComponent<SinglePreviewProps> = props => (
+const BPreviewAEdit: React.StatelessComponent<BaseProps> = props => (
   <React.Fragment>
     <EditorBlock
-      content={{ text: props.fetchedContent }}
+      content={props.bhargavContent ? props.bhargavContent : { text: "" }}
       person={Bhargav}
-      previewMode={true}
+      previewMode={false}
       onClick={props.onClick}
       onSubmit={props.onSubmit}
     />
     <EditorBlock
-      content={{ text: props.fetchedContent }}
+      content={props.editorContent}
       person={Ashima}
-      previewMode={true}
+      previewMode={false}
       onClick={props.onClick}
       onSubmit={props.onSubmit}
     />

@@ -2,12 +2,14 @@ package app
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/bIgBV/thoughtlog-api/models"
 )
@@ -16,6 +18,7 @@ import (
 type PostStorer interface {
 	Create(p *models.Post) error
 	Get(createdDate time.Time) (*[]models.Post, error)
+	Count(p *models.Post) (int, error)
 }
 
 // PostResource implements all Post handlers
@@ -59,6 +62,19 @@ func (rs *PostResource) post(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&p)
 	if err != nil {
 		render.Respond(w, r, ErrInvalidRequest(err))
+		return
+	}
+
+	p.CreatedAt = time.Now()
+	count, err := rs.Store.Count(&p)
+	if err != nil {
+		log.WithField("Error", err).Debug("Something went wrong")
+		render.Respond(w, r, ErrInternalError(err))
+		return
+	}
+
+	if count != 0 {
+		render.Respond(w, r, ErrInvalidData(errors.New("Post already exists")))
 		return
 	}
 

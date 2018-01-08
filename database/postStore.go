@@ -5,6 +5,7 @@ import (
 
 	"github.com/bIgBV/thoughtlog-api/models"
 	"github.com/go-pg/pg"
+	log "github.com/sirupsen/logrus"
 )
 
 // PostStore implements persistance operations for a given post
@@ -44,4 +45,19 @@ func (s *PostStore) Get(createdDate time.Time) (*[]models.Post, error) {
 		Select(&res)
 
 	return &res, err
+}
+
+// Count counts the number of posts created by the given person on the given date.
+func (s *PostStore) Count(p *models.Post) (int, error) {
+	count, err := s.db.Model(&models.Post{}).
+		Where("created_at::date > date ?", p.CreatedAt.AddDate(0, 0, -1).Format("2006-01-2")).
+		Where("created_at::date <= date ?", p.CreatedAt.Format("2006-01-2")).
+		Where("created_by = ?", p.CreatedBy).
+		Count()
+	if err != nil {
+		log.WithField("Error", err).Info("Something went wrong")
+		return 0, err
+	}
+
+	return count, nil
 }
