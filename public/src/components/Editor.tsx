@@ -50,9 +50,9 @@ class Editor extends React.Component<EditorProps, EditorState> {
           onChange={this.handleValueChange}
           commands={ReactMdeCommands.getDefaultCommands()}
           visibility={{
-            previewHelp: this.props.previewMode,
-            textarea: this.props.previewMode,
-            toolbar: this.props.previewMode
+            previewHelp: !this.props.previewMode,
+            textarea: !this.props.previewMode,
+            toolbar: !this.props.previewMode
           }}
         />
       </div>
