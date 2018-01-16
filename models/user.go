@@ -8,15 +8,23 @@ import (
 	"github.com/go-pg/pg/orm"
 )
 
+// Token represents a user token
+type Token struct {
+	ID    int    `json:"id"`
+	Token string `json:"token"`
+}
+
 // User representes an authenticated application user
 type User struct {
 	ID        int       `json:"id"`
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 
-	Email    string `json:"email"`
-	Password string `json:"password,omitempty"`
-	Name     string `json:"name"`
+	Email       string `json:"email"`
+	Password    string `json:"password,omitempty"`
+	Name        string `json:"name"`
+	UserTokenID int
+	UserToken   *Token `json:"token" sql:",user_token"`
 }
 
 // BeforeInsert hook executed before database insert operations
