@@ -1,5 +1,5 @@
 import * as React from "react";
-import { RouteComponentProps, Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 
 import { Person } from "../components/Editor";
 import EditorContainer from "../components/EditorContainer";
@@ -42,14 +42,18 @@ interface Params {
   date: string;
 }
 
+interface DayProps extends RouteComponentProps<Params> {
+  token: string;
+}
+
 interface DayState {
   isSubmitting: boolean;
   error: string;
   submitted: boolean;
 }
 
-class Day extends React.Component<RouteComponentProps<Params>, DayState> {
-  constructor(props: RouteComponentProps<Params>, state: {}) {
+class Day extends React.Component<DayProps, DayState> {
+  constructor(props: DayProps, state: {}) {
     super(props, state);
     this.state = {
       error: "",
@@ -64,7 +68,8 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
     CreatePost(
       e.text,
       this.props.match.params.user,
-      this.props.match.params.date
+      this.props.match.params.date,
+      this.props.token
     ).then(data => {
       if (IsErrResp(data)) {
         this.setState({ error: data.error, isSubmitting: false });
@@ -98,6 +103,7 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
           </div>
           {[Bhargav, Ashima].map(person => (
             <EditorContainer
+              token={this.props.token}
               key={person}
               content={{ text: "" }}
               loggedInPerson={loggedInUser}

@@ -14,7 +14,7 @@ interface LoginState {
 }
 
 interface LoginProps extends RouteComponentProps<{}> {
-  callback: (value: boolean) => void;
+  callback: (value: boolean, token: string) => void;
   isLoggedIn: boolean;
 }
 
@@ -53,7 +53,7 @@ export default class Login extends React.Component<LoginProps, LoginState> {
           return;
         }
         if (IsUserResp(data)) {
-          this.props.callback(true);
+          this.props.callback(true, data.token.token);
           this.setState({ isLoggedIn: true });
         }
       })

@@ -19,6 +19,10 @@ export interface UserResponse {
   created_at: string;
   updated_at: string;
   email: string;
+  token: {
+    id: number;
+    token: string;
+  };
 }
 
 export interface Post {
@@ -38,7 +42,7 @@ export function IsErrResp(object: any): object is ErrorResponse {
 }
 
 export function IsUserResp(object: any): object is UserResponse {
-  return "email" in object;
+  return object.status_code === 202;
 }
 
 export function IsPostResp(object: any): object is PostResponse {
@@ -74,7 +78,8 @@ export function AuthLogin(
 export function CreatePost(
   body: string,
   createdBy: Person,
-  timestamp: string
+  timestamp: string,
+  token: string
 ): Promise<ErrorResponse | PostResponse> {
   const convertedTimestamp = new Date(parseInt(timestamp, 10));
   const tzOffset = new Date().getTimezoneOffset() * 60000;
@@ -88,13 +93,17 @@ export function CreatePost(
       created_at: localISOOffset,
       created_by: GetId(createdBy)
     }),
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
     method: "POST"
   }).then(response => response.json());
 }
 
 export function GetPost(
   timestamp: string,
-  createdBy: Person
+  createdBy: Person,
+  token: string
 ): Promise<PostResponse | ErrorResponse> {
   const convertedTimestamp = Math.floor(parseInt(timestamp, 10) / 1000);
 
@@ -102,6 +111,9 @@ export function GetPost(
     `http://localhost:3001/post/${convertedTimestamp}?user=${GetId(createdBy)}`,
     {
       body: undefined,
+      headers: {
+        Authorization: `Bearer: ${token}`
+      },
       method: "GET"
     }
   ).then(response => response.json());

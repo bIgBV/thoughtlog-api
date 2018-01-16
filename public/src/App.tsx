@@ -13,6 +13,7 @@ interface AppProps {
 
 interface AppState {
   isLoggedIn: boolean;
+  token: string | null;
 }
 
 class App extends React.Component<AppProps, AppState> {
@@ -20,14 +21,15 @@ class App extends React.Component<AppProps, AppState> {
     super(props, state);
 
     this.state = {
-      isLoggedIn: false
+      isLoggedIn: false,
+      token: null
     };
 
     this.setLoggedIn = this.setLoggedIn.bind(this);
   }
 
-  public setLoggedIn(value: boolean) {
-    this.setState({ isLoggedIn: value });
+  public setLoggedIn(value: boolean, token: string) {
+    this.setState({ isLoggedIn: value, token });
   }
 
   public render() {
@@ -43,7 +45,7 @@ class App extends React.Component<AppProps, AppState> {
         {...rest}
         render={props =>
           this.state.isLoggedIn ? (
-            <Component {...props} />
+            <Component {...props} token={this.state.token} />
           ) : (
             <Redirect
               to={{

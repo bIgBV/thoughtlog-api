@@ -5,6 +5,7 @@ import { GetPost, IsErrResp } from "../services/HttpService";
 import Editor, { Person } from "./Editor";
 
 interface EditorBlockProps {
+  token: string;
   person: Person;
   timestamp: string;
   content: Value;
@@ -42,34 +43,36 @@ export default class EditorBlock extends React.Component<
   public componentDidMount() {
     this.setState({ isLoading: true });
 
-    GetPost(this.props.timestamp, this.props.person.toLowerCase()).then(
-      data => {
-        if (IsErrResp(data)) {
-          this.setState({
-            error: data.error
-          });
-          return;
-        }
-
-        const fetchedContent = data.data;
-
-        if (fetchedContent.length === 0) {
-          this.setState({
-            content: this.props.content,
-            isLoading: false,
-            isPreview: false
-          });
-        } else {
-          this.setState({
-            content: {
-              text: data.data[0].body
-            },
-            isLoading: false,
-            isPreview: true
-          });
-        }
+    GetPost(
+      this.props.timestamp,
+      this.props.person.toLowerCase(),
+      this.props.token
+    ).then(data => {
+      if (IsErrResp(data)) {
+        this.setState({
+          error: data.error
+        });
+        return;
       }
-    );
+
+      const fetchedContent = data.data;
+
+      if (fetchedContent.length === 0) {
+        this.setState({
+          content: this.props.content,
+          isLoading: false,
+          isPreview: false
+        });
+      } else {
+        this.setState({
+          content: {
+            text: data.data[0].body
+          },
+          isLoading: false,
+          isPreview: true
+        });
+      }
+    });
   }
 
   public contentCallback(value: Value) {
