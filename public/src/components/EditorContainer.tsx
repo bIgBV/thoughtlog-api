@@ -80,6 +80,7 @@ export default class EditorBlock extends React.Component<
     e.preventDefault();
 
     this.props.onSubmit(this.state.content);
+    this.setState({ isPreview: true });
   }
 
   public render() {
