@@ -35,13 +35,14 @@ func (s *PostStore) Create(p *models.Post) error {
 }
 
 // Get returns posts made by a given user on the given date
-func (s *PostStore) Get(createdDate time.Time) (*[]models.Post, error) {
+func (s *PostStore) Get(createdDate time.Time, userID int64) (*[]models.Post, error) {
 	p := models.Post{}
 	var res []models.Post
 
 	err := s.db.Model(&p).
 		Where("created_at::date > date ?", createdDate.AddDate(0, 0, -1).Format("2006-01-2")).
 		Where("created_at::date <= date ?", createdDate.Format("2006-01-2")).
+		Where("created_by = ?", userID).
 		Select(&res)
 
 	return &res, err

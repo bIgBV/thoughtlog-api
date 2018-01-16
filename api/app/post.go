@@ -17,7 +17,7 @@ import (
 // PostStorer defines the database persistance interface for a Post
 type PostStorer interface {
 	Create(p *models.Post) error
-	Get(createdDate time.Time) (*[]models.Post, error)
+	Get(createdDate time.Time, userID int64) (*[]models.Post, error)
 	Count(p *models.Post) (int, error)
 }
 
@@ -94,9 +94,22 @@ func (rs *PostResource) get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var user int64
+
+	userStr := r.URL.Query().Get("user")
+	if userStr == "" {
+		render.Respond(w, r, ErrInvalidRequest(errors.New("User not specified")))
+		return
+	}
+
+	user, err = strconv.ParseInt(userStr, 10, 64)
+	if err != nil {
+		render.Respond(w, r, ErrInvalidRequest(err))
+	}
+
 	timeStamp := time.Unix(i, 0)
 
-	storedPost, err := rs.Store.Get(timeStamp)
+	storedPost, err := rs.Store.Get(timeStamp, user)
 	if err != nil {
 		render.Respond(w, r, ErrInvalidRequest(err))
 		return
