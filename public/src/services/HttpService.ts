@@ -73,11 +73,19 @@ export function AuthLogin(
  */
 export function CreatePost(
   body: string,
-  createdBy: Person
+  createdBy: Person,
+  timestamp: string
 ): Promise<ErrorResponse | PostResponse> {
+  const convertedTimestamp = new Date(parseInt(timestamp, 10));
+  const tzOffset = new Date().getTimezoneOffset() * 60000;
+  const localISOOffset = new Date(
+    convertedTimestamp.getTime() - tzOffset
+  ).toISOString();
+
   return fetch("http://localhost:3001/post/1983718391", {
     body: JSON.stringify({
       body,
+      created_at: localISOOffset,
       created_by: GetId(createdBy)
     }),
     method: "POST"
