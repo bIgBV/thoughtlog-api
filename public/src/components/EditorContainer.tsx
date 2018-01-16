@@ -42,30 +42,34 @@ export default class EditorBlock extends React.Component<
   public componentDidMount() {
     this.setState({ isLoading: true });
 
-    GetPost(this.props.timestamp).then(data => {
-      if (IsErrResp(data)) {
-        this.setState({
-          error: data.error
-        });
-        return;
-      }
+    GetPost(this.props.timestamp, this.props.person.toLowerCase()).then(
+      data => {
+        if (IsErrResp(data)) {
+          this.setState({
+            error: data.error
+          });
+          return;
+        }
 
-      const fetchedContent = data.data;
+        const fetchedContent = data.data;
 
-      if (fetchedContent.length === 0) {
-        this.setState({
-          content: this.props.content,
-          isLoading: false
-        });
-      } else {
-        this.setState({
-          content: {
-            text: data.data.filter(post => post.created_by === 0)[0].body
-          },
-          isLoading: false
-        });
+        if (fetchedContent.length === 0) {
+          this.setState({
+            content: this.props.content,
+            isLoading: false,
+            isPreview: false
+          });
+        } else {
+          this.setState({
+            content: {
+              text: data.data[0].body
+            },
+            isLoading: false,
+            isPreview: true
+          });
+        }
       }
-    });
+    );
   }
 
   public contentCallback(value: Value) {
@@ -79,13 +83,13 @@ export default class EditorBlock extends React.Component<
   }
 
   public render() {
-    let isPreview = true;
+    let isPreview = this.state.isPreview;
 
     if (
-      this.props.loggedInPerson.toLowerCase() ===
+      this.props.loggedInPerson.toLowerCase() !==
       this.props.person.toLowerCase()
     ) {
-      isPreview = this.state.content.text !== "";
+      isPreview = true;
     }
 
     return (

@@ -41,7 +41,7 @@ export function IsUserResp(object: any): object is UserResponse {
 }
 
 export function IsPostResp(object: any): object is PostResponse {
-  return "body" in object;
+  return object.status_code === 201;
 }
 /* tslint:enable */
 
@@ -77,19 +77,25 @@ export function CreatePost(
   return fetch("http://localhost:3001/post/1983718391", {
     body: JSON.stringify({
       body,
-      created_by: createdBy === "bhargav" ? 0 : 1
+      created_by: createdBy === "bhargav" ? 1 : 2
     }),
     method: "POST"
   }).then(response => response.json());
 }
 
 export function GetPost(
-  timestamp: string
+  timestamp: string,
+  createdBy: Person
 ): Promise<PostResponse | ErrorResponse> {
   const convertedTimestamp = Math.floor(parseInt(timestamp, 10) / 1000);
 
-  return fetch(`http://localhost:3001/post/${convertedTimestamp}`, {
-    body: undefined,
-    method: "GET"
-  }).then(response => response.json());
+  return fetch(
+    `http://localhost:3001/post/${convertedTimestamp}?user=${
+      createdBy === "bhargav" ? 1 : 2
+    }`,
+    {
+      body: undefined,
+      method: "GET"
+    }
+  ).then(response => response.json());
 }

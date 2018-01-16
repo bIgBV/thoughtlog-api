@@ -83,20 +83,15 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
       <div className="day section">
         <div className="day-header title">{this.getDateString()}</div>
         <div className="columns">
-          <EditorContainer
-            content={{ text: "" }}
-            loggedInPerson={loggedInUser}
-            person={Bhargav}
-            timestamp={this.props.match.params.date}
-            onSubmit={this.handleClick}
-          />
-          <EditorContainer
-            content={{ text: "" }}
-            loggedInPerson={this.props.match.params.user}
-            person={Ashima}
-            timestamp={this.props.match.params.date}
-            onSubmit={this.handleClick}
-          />
+          {[Bhargav, Ashima].map(person => (
+            <EditorContainer
+              content={{ text: "" }}
+              loggedInPerson={loggedInUser}
+              person={person}
+              timestamp={this.props.match.params.date}
+              onSubmit={this.handleClick}
+            />
+          ))}
         </div>
       </div>
     );
