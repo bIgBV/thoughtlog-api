@@ -57,7 +57,7 @@ class App extends React.Component<AppProps, AppState> {
     );
     return (
       <div className="paper">
-        <div className="App conatiner">
+        <div className="App">
           <Switch>
             <Route
               path="/login"

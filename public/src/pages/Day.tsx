@@ -1,5 +1,5 @@
 import * as React from "react";
-import { RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, Link } from "react-router-dom";
 
 import { Person } from "../components/Editor";
 import EditorContainer from "../components/EditorContainer";
@@ -83,8 +83,16 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
       <div className="day section">
         <div className="day-header title">{this.getDateString()}</div>
         <div className="columns">
+          <div className="column is-1">
+            <Link to={`/day/${loggedInUser}/${this.genPrev()}`}>
+              <span className="icon">
+                <i className="fas fa-info-circle" />
+              </span>
+            </Link>
+          </div>
           {[Bhargav, Ashima].map(person => (
             <EditorContainer
+              key={person}
               content={{ text: "" }}
               loggedInPerson={loggedInUser}
               person={person}
@@ -92,16 +100,35 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
               onSubmit={this.handleClick}
             />
           ))}
+          <div className="column is-1">
+            <Link to={`/day/${loggedInUser}/${this.genNext()}`}>
+              <span className="icon">
+                <i className="fas fa-chevron-right" />
+              </span>
+            </Link>
+          </div>
         </div>
       </div>
     );
   }
 
   private getDateString() {
-    const today = new Date();
+    const today = new Date(parseInt(this.props.match.params.date, 10));
     return `${DAY_MAP[today.getDay()]}, ${today.getDate()} ${
       MONTH_MAP[today.getMonth()]
     }, ${today.getFullYear()}`;
+  }
+
+  private genPrev() {
+    const date = new Date(parseInt(this.props.match.params.date, 10));
+    date.setDate(date.getDate() - 1);
+    return date.getTime();
+  }
+
+  private genNext() {
+    const date = new Date(parseInt(this.props.match.params.date, 10));
+    date.setDate(date.getDate() + 1);
+    return date.getTime();
   }
 }
 
