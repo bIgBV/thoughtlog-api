@@ -66,7 +66,7 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
         this.setState({ error: data.error, isSubmitting: false });
         return;
       }
-      if (IsPostResp(data[0])) {
+      if (IsPostResp(data)) {
         this.setState({
           isSubmitting: false,
           submitted: true

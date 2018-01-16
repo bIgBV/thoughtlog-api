@@ -1,4 +1,5 @@
 import { Person } from "../components/Editor";
+import { GetId } from "./UserService";
 
 interface APIResponse<T> {
   data: T[];
@@ -77,7 +78,7 @@ export function CreatePost(
   return fetch("http://localhost:3001/post/1983718391", {
     body: JSON.stringify({
       body,
-      created_by: createdBy === "bhargav" ? 1 : 2
+      created_by: GetId(createdBy)
     }),
     method: "POST"
   }).then(response => response.json());
@@ -90,9 +91,7 @@ export function GetPost(
   const convertedTimestamp = Math.floor(parseInt(timestamp, 10) / 1000);
 
   return fetch(
-    `http://localhost:3001/post/${convertedTimestamp}?user=${
-      createdBy === "bhargav" ? 1 : 2
-    }`,
+    `http://localhost:3001/post/${convertedTimestamp}?user=${GetId(createdBy)}`,
     {
       body: undefined,
       method: "GET"
