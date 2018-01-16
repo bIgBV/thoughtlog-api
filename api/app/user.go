@@ -96,13 +96,8 @@ func (rs *UserResource) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.SetCookie(w, &http.Cookie{
-		Name:  "user",
-		Value: u.Name,
-	})
-
 	// Clear password before seiralization
-	u.Password = ""
+	dbUser.Password = ""
 
-	render.Respond(w, r, newUserResponse(&u))
+	render.Respond(w, r, newUserResponse(dbUser))
 }

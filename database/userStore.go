@@ -22,6 +22,7 @@ func (s *UserStore) Get(name string) (*models.User, error) {
 	u := models.User{Name: name}
 	err := s.db.Model(&u).
 		Where("name = ?", name).
+		Column("user.*", "UserToken").
 		Select()
 	return &u, err
 }
