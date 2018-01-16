@@ -65,7 +65,6 @@ func (rs *PostResource) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	p.CreatedAt = time.Now()
 	count, err := rs.Store.Count(&p)
 	if err != nil {
 		log.WithField("Error", err).Debug("Something went wrong")
