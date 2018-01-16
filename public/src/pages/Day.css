@@ -15,3 +15,10 @@
 .button .day-submit {
   background-color: #2490e9;
 }
+
+.link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
