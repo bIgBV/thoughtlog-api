@@ -61,7 +61,11 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
   }
 
   public handleClick(e: Value) {
-    CreatePost(e.text, this.props.match.params.user).then(data => {
+    CreatePost(
+      e.text,
+      this.props.match.params.user,
+      this.props.match.params.date
+    ).then(data => {
       if (IsErrResp(data)) {
         this.setState({ error: data.error, isSubmitting: false });
         return;
@@ -85,9 +89,11 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
         <div className="columns">
           <div className="column is-1">
             <Link to={`/day/${loggedInUser}/${this.genPrev()}`}>
-              <span className="icon">
-                <i className="fas fa-info-circle" />
-              </span>
+              <div className="link">
+                <span className="icon">
+                  <i className="fas fa-chevron-left" />
+                </span>
+              </div>
             </Link>
           </div>
           {[Bhargav, Ashima].map(person => (
@@ -102,9 +108,11 @@ class Day extends React.Component<RouteComponentProps<Params>, DayState> {
           ))}
           <div className="column is-1">
             <Link to={`/day/${loggedInUser}/${this.genNext()}`}>
-              <span className="icon">
-                <i className="fas fa-chevron-right" />
-              </span>
+              <div className="link">
+                <span className="icon">
+                  <i className="fas fa-chevron-right" />
+                </span>
+              </div>
             </Link>
           </div>
         </div>
