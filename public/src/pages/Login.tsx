@@ -2,6 +2,7 @@ import * as React from "react";
 import { Redirect, RouteComponentProps } from "react-router-dom";
 
 import { AuthLogin, IsErrResp, IsUserResp } from "../services/HttpService";
+import { SetCookie } from '../services/UserService';
 
 import "./Login.css";
 
@@ -55,6 +56,8 @@ export default class Login extends React.Component<LoginProps, LoginState> {
         if (IsUserResp(data)) {
           this.props.callback(true, data.token.token);
           this.setState({ isLoggedIn: true });
+          // set login token
+          setLoginTokinCookie(data.token.token);
         }
       })
       .catch((err: Error) => this.setState({ error: err.message }));
@@ -118,4 +121,8 @@ export default class Login extends React.Component<LoginProps, LoginState> {
       </div>
     );
   }
+}
+
+function setLoginTokinCookie(token: string) {
+    SetCookie("token", token, 50);
 }

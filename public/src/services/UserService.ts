@@ -1,4 +1,5 @@
-const CookieMap: { [key: string]: string } = {};
+// @format
+const CookieMap: {[key: string]: string} = {};
 
 export type Person = string;
 
@@ -7,17 +8,28 @@ export function ReadCookie(name: string): string | undefined {
     return CookieMap[name];
   }
 
-  const cookies = document.cookie.split("; ");
+  const cookies = document.cookie.split('; ');
 
   for (let i = cookies.length - 1; i >= 0; i--) {
-    const cookie = cookies[i].split("=");
+    const cookie = cookies[i].split('=');
     CookieMap[cookie[0]] = cookie[1];
   }
   return CookieMap[name];
 }
 
-const Bhargav = "bhargav";
-const Ashima = "ashima";
+export function SetCookie(name: string, value: string, days?: number) {
+  let expires = '';
+  if (days) {
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 2400);
+    expires = `; expires=${date.toISOString()}`;
+  }
+
+  document.cookie = `${name} = ${value || ''} ${expires}; path=/`;
+}
+
+const Bhargav = 'bhargav';
+const Ashima = 'ashima';
 
 export function GetPerson(id: number): Person {
   if (id === 1) {

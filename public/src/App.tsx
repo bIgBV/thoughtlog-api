@@ -1,19 +1,19 @@
-import * as React from "react";
-import "./App.css";
+import * as React from 'react';
+import './App.css';
 
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Redirect, Route, Switch } from 'react-router-dom';
 
-import Day from "./pages/Day";
-import Login from "./pages/Login";
+import Day from './pages/Day';
+import Login from './pages/Login';
 
 interface AppProps {
   isLoggedIn: boolean;
-  loginData?: object;
+  loginData: {token: string};
 }
 
 interface AppState {
   isLoggedIn: boolean;
-  token: string | null;
+  token: string;
 }
 
 class App extends React.Component<AppProps, AppState> {
@@ -22,14 +22,21 @@ class App extends React.Component<AppProps, AppState> {
 
     this.state = {
       isLoggedIn: false,
-      token: null
+      token: '',
     };
 
     this.setLoggedIn = this.setLoggedIn.bind(this);
   }
 
+  public componentDidMount() {
+    this.setState({token: this.props.loginData.token});
+  }
+
   public setLoggedIn(value: boolean, token: string) {
-    this.setState({ isLoggedIn: value, token });
+    if (token !== '') {
+      this.setState({isLoggedIn: value, token});
+    }
+    this.setState({isLoggedIn: false});
   }
 
   public render() {
@@ -49,8 +56,8 @@ class App extends React.Component<AppProps, AppState> {
           ) : (
             <Redirect
               to={{
-                pathname: "/login",
-                state: { from: props.location }
+                pathname: '/login',
+                state: {from: props.location},
               }}
             />
           )

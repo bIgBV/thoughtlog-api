@@ -10,12 +10,16 @@ import { ReadCookie } from "./services/UserService";
 import "normalize.css";
 import "./index.css";
 
-let loginData = {};
-const isLoggedIn = ReadCookie("name") !== undefined;
+let loginData = {
+  token: ""
+};
+const nameCookie = ReadCookie("name");
 
-if (ReadCookie("name") !== undefined) {
+const isLoggedIn = nameCookie !== undefined;
+
+if (nameCookie) {
   loginData = {
-    userName: ReadCookie("name")
+    token: nameCookie
   };
 }
 
