@@ -46,16 +46,12 @@ export default class Login extends React.Component<LoginProps, LoginState> {
 
     AuthLogin(this.state.username, this.state.password)
       .then(data => {
-        /* tslint:disable */
-        console.log(data);
-        /* tslint:enable */
         if (IsErrResp(data)) {
           this.setState({ error: data.error, isSubmitting: false });
           return;
         }
         if (IsUserResp(data)) {
           this.props.callback(true, data.token.token);
-          this.setState({ isLoggedIn: true });
           // set login token
           setLoginTokinCookie(data.token.token);
         }
@@ -69,7 +65,7 @@ export default class Login extends React.Component<LoginProps, LoginState> {
       return `${now.getTime()}`;
     };
 
-    if (this.state.isLoggedIn) {
+    if (this.props.isLoggedIn) {
       return <Redirect to={`/day/${this.state.username}/${genTimeStamp()}`} />;
     }
 

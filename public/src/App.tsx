@@ -6,6 +6,35 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import Day from './pages/Day';
 import Login from './pages/Login';
 
+interface PrivateDayProps {
+  component: typeof Day;
+  isLoggedIn: boolean;
+  token: string;
+  path: string;
+}
+const PrivateDay: React.StatelessComponent<PrivateDayProps> = ({
+  component: Component,
+  isLoggedIn: isLoggedIn,
+  token: token,
+  ...rest
+}) => (
+  <Route
+    {...rest}
+    render={props =>
+      isLoggedIn ? (
+        <Component {...props} token={token} />
+      ) : (
+        <Redirect
+          to={{
+            pathname: '/login',
+            state: {from: props.location},
+          }}
+        />
+      )
+    }
+  />
+);
+
 interface AppProps {
   isLoggedIn: boolean;
   loginData: {token: string};
@@ -21,49 +50,20 @@ class App extends React.Component<AppProps, AppState> {
     super(props, state);
 
     this.state = {
-      isLoggedIn: false,
-      token: '',
+      isLoggedIn: this.props.isLoggedIn,
+      token: this.props.loginData.token,
     };
 
     this.setLoggedIn = this.setLoggedIn.bind(this);
-  }
-
-  public componentDidMount() {
-    this.setState({token: this.props.loginData.token});
   }
 
   public setLoggedIn(value: boolean, token: string) {
     if (token !== '') {
       this.setState({isLoggedIn: value, token});
     }
-    this.setState({isLoggedIn: false});
   }
 
   public render() {
-    interface PrivateDayProps {
-      component: typeof Day;
-      path: string;
-    }
-    const PrivateDay: React.StatelessComponent<PrivateDayProps> = ({
-      component: Component,
-      ...rest
-    }) => (
-      <Route
-        {...rest}
-        render={props =>
-          this.state.isLoggedIn ? (
-            <Component {...props} token={this.state.token} />
-          ) : (
-            <Redirect
-              to={{
-                pathname: '/login',
-                state: {from: props.location},
-              }}
-            />
-          )
-        }
-      />
-    );
     return (
       <div className="paper">
         <div className="App">
@@ -78,7 +78,12 @@ class App extends React.Component<AppProps, AppState> {
                 />
               )}
             />
-            <PrivateDay path="/day/:user/:date" component={Day} />
+            <PrivateDay
+              path="/day/:user/:date"
+              component={Day}
+              token={this.state.token}
+              isLoggedIn={this.state.isLoggedIn}
+            />
             <Redirect to="/login" />
           </Switch>
         </div>

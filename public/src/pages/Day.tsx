@@ -37,7 +37,7 @@ const MONTH_MAP = {
   11: "December"
 };
 
-interface Params {
+export interface Params {
   user: string;
   date: string;
 }

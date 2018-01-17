@@ -13,7 +13,7 @@ import "./index.css";
 let loginData = {
   token: ""
 };
-const nameCookie = ReadCookie("name");
+const nameCookie = ReadCookie("token");
 
 const isLoggedIn = nameCookie !== undefined;
 
