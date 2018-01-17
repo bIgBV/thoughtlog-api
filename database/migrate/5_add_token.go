@@ -14,7 +14,7 @@ CREATE TABLE tokens (
 
 const addTokenFk = `
 ALTER TABLE users
-	ADD COLUMN user_token INTEGER;
+	ADD COLUMN user_token_id INTEGER;
 ALTER TABLE users
 	ADD CONSTRAINT fk_token
 	FOREIGN KEY(user_token_id)
