@@ -64,6 +64,10 @@ class Day extends React.Component<DayProps, DayState> {
     this.handleClick = this.handleClick.bind(this);
   }
 
+  public shouldComponentUpdate(nextProps: Readonly<DayProps>, nextState: Readonly<DayState>): boolean {
+    return nextProps.match.params.date !== this.props.match.params.date;
+  }
+
   public handleClick(e: Value) {
     CreatePost(
       e.text,

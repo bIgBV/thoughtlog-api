@@ -1,8 +1,8 @@
-import * as React from "react";
-import { Value } from "react-mde/lib/definitions/types";
+import * as React from 'react';
+import { Value } from 'react-mde/lib/definitions/types';
 
-import { GetPost, IsErrResp } from "../services/HttpService";
-import Editor, { Person } from "./Editor";
+import { GetPost, IsErrResp } from '../services/HttpService';
+import Editor, { Person } from './Editor';
 
 interface EditorBlockProps {
   token: string;
@@ -29,28 +29,40 @@ export default class EditorBlock extends React.Component<
 
     this.state = {
       content: {
-        text: ""
+        text: '',
       },
-      error: "",
+      error: '',
       isLoading: false,
-      isPreview: false
+      isPreview: false,
     };
 
     this.contentCallback = this.contentCallback.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.updateContent = this.updateContent.bind(this);
   }
 
   public componentDidMount() {
-    this.setState({ isLoading: true });
+    this.updateContent();
+  }
+
+  public componentWillReceiveProps(
+    nextProps: Readonly<EditorBlockProps>,
+    nextContent: {},
+  ) {
+    this.updateContent();
+  }
+
+  public updateContent() {
+    this.setState({isLoading: true});
 
     GetPost(
       this.props.timestamp,
       this.props.person.toLowerCase(),
-      this.props.token
+      this.props.token,
     ).then(data => {
       if (IsErrResp(data)) {
         this.setState({
-          error: data.error
+          error: data.error,
         });
         return;
       }
@@ -61,29 +73,29 @@ export default class EditorBlock extends React.Component<
         this.setState({
           content: this.props.content,
           isLoading: false,
-          isPreview: false
+          isPreview: false,
         });
       } else {
         this.setState({
           content: {
-            text: data.data[0].body
+            text: data.data[0].body,
           },
           isLoading: false,
-          isPreview: true
+          isPreview: true,
         });
       }
     });
   }
 
   public contentCallback(value: Value) {
-    this.setState({ content: value });
+    this.setState({content: value});
   }
 
   public handleSubmit(e: React.SyntheticEvent<HTMLAnchorElement>) {
     e.preventDefault();
 
     this.props.onSubmit(this.state.content);
-    this.setState({ isPreview: true });
+    this.setState({isPreview: true});
   }
 
   public render() {
