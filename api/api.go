@@ -2,6 +2,10 @@ package api
 
 import (
 	"net/http"
+	"net/http/httputil"
+	"net/url"
+	"os"
+	"path"
 
 	"github.com/bIgBV/thoughtlog-api/api/app"
 	"github.com/bIgBV/thoughtlog-api/database"
@@ -32,12 +36,15 @@ func New() (*chi.Mux, error) {
 
 	r.Use(logging.NewStructuredLogger(logger))
 
-	r.Mount("/", API.Router())
+	r.Mount("/api", API.Router())
 
 	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("pong"))
 	})
 
+	proxy := NewProxy("http://localhost:3000")
+
+	r.Get("/*", proxy.handle)
 	return r, nil
 }
 
@@ -49,4 +56,40 @@ func corsConfig() *cors.Cors {
 		AllowCredentials: true,
 		MaxAge:           86400,
 	})
+}
+
+// Prox aliases httputil.ReversePRoxy and adds target information
+type Prox struct {
+	target *url.URL
+	proxy  *httputil.ReverseProxy
+}
+
+// NewProxy creates a new proxy for the given target
+func NewProxy(target string) *Prox {
+	url, _ := url.Parse(target)
+
+	return &Prox{
+		target: url,
+		proxy:  httputil.NewSingleHostReverseProxy(url),
+	}
+}
+
+func (p *Prox) handle(w http.ResponseWriter, r *http.Request) {
+	p.proxy.ServeHTTP(w, r)
+}
+
+// SPAHandler serves the public directory with the SPA
+func SPAHandler(publicDir string) http.HandlerFunc {
+	handler := http.FileServer(http.Dir(publicDir))
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		indexPage := path.Join(publicDir, "index.html")
+
+		requestedAsset := path.Join(publicDir, r.URL.Path)
+		if _, err := os.Stat(requestedAsset); err != nil {
+			http.ServeFile(w, r, indexPage)
+		}
+
+		handler.ServeHTTP(w, r)
+	}
 }
