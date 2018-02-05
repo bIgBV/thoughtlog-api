@@ -130,7 +130,7 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
-  packages = ["ssh/terminal"]
+  packages = ["bcrypt","blowfish","ssh/terminal"]
   revision = "0fcca4842a8d74bfddc2c96a073bd2a4d2a7a2e8"
 
 [[projects]]
@@ -154,6 +154,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "5168bd9d1fd15ba02648ae78bef2eeb1f3d4f6124055d0d0fe00046b12ded27f"
+  inputs-digest = "5e5e692e7ad7a7a00a48e6fe073b8f18ad5bdb6db82350a58e7691c21cf3124a"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -101,3 +101,21 @@ func (rs *UserResource) post(w http.ResponseWriter, r *http.Request) {
 
 	render.Respond(w, r, newUserResponse(dbUser))
 }
+
+const (
+	ctxUser = iota
+)
+
+// AuthenticateUser checks if the token is set.
+func AuthenticateUser(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, err := r.Cookie("user-token")
+		if err != nil {
+			ctx := context.WithValue(r.Context(), ctxUser, false)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		}
+		ctx := context.WithValue(r.Context(), ctxUser, true)
+		next.ServeHTTP(w, r.WithContext(ctx))
+		return
+	})
+}

@@ -10,6 +10,20 @@
 
 .day-header {
   color: rgb(97, 97, 97);
+  display: flex;
+  align-content: space-between;
+}
+
+.day-header .title {
+  width: 100%;
+}
+
+.day-header .today {
+  width: 100%;
+}
+
+.day-header .logout {
+  width: 100%;
 }
 
 .button .day-submit {

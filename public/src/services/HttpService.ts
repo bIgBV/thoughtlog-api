@@ -87,7 +87,7 @@ export function CreatePost(
     convertedTimestamp.getTime() - tzOffset
   ).toISOString();
 
-  return fetch("http://localhost:3001/post/1983718391", {
+  return fetch("http://localhost:3001/api/post/1983718391", {
     body: JSON.stringify({
       body,
       created_at: localISOOffset,
@@ -108,7 +108,7 @@ export function GetPost(
   const convertedTimestamp = Math.floor(parseInt(timestamp, 10) / 1000);
 
   return fetch(
-    `http://localhost:3001/post/${convertedTimestamp}?user=${GetId(createdBy)}`,
+    `http://localhost:3001/api/post/${convertedTimestamp}?user=${GetId(createdBy)}`,
     {
       body: undefined,
       headers: {

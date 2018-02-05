@@ -120,5 +120,5 @@ export default class Login extends React.Component<LoginProps, LoginState> {
 }
 
 function setLoginTokinCookie(token: string) {
-    SetCookie("token", token, 50);
+    SetCookie("token", token, 5);
 }

@@ -8,6 +8,7 @@ import (
 	"path"
 
 	"github.com/bIgBV/thoughtlog-api/api/app"
+	"github.com/bIgBV/thoughtlog-api/controllers"
 	"github.com/bIgBV/thoughtlog-api/database"
 	"github.com/bIgBV/thoughtlog-api/logging"
 
@@ -28,6 +29,8 @@ func New() (*chi.Mux, error) {
 
 	API, err := app.NewAPI(db)
 
+	controller := controllers.NewLoginController(API.User.Store)
+
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
@@ -36,15 +39,21 @@ func New() (*chi.Mux, error) {
 
 	r.Use(logging.NewStructuredLogger(logger))
 
-	r.Mount("/api", API.Router())
-
 	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("pong"))
 	})
 
 	proxy := NewProxy("http://localhost:3000")
+	r.Group(func(r chi.Router) {
+		r.Use(app.AuthenticateUser)
+		r.Get("/*", proxy.handle)
+		r.Mount("/api", API.Router())
+	})
 
-	r.Get("/*", proxy.handle)
+	r.Group(func(r chi.Router) {
+		r.Get("/login", controller.LoginController)
+		r.Post("/login", controller.LoginController)
+	})
 	return r, nil
 }
 

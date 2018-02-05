@@ -44,6 +44,7 @@ export interface Params {
 
 interface DayProps extends RouteComponentProps<Params> {
   token: string;
+  setLoggedOut: () => void;
 }
 
 interface DayState {
@@ -62,6 +63,7 @@ class Day extends React.Component<DayProps, DayState> {
     };
 
     this.handleClick = this.handleClick.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
   }
 
   public shouldComponentUpdate(nextProps: Readonly<DayProps>, nextState: Readonly<DayState>): boolean {
@@ -89,12 +91,30 @@ class Day extends React.Component<DayProps, DayState> {
     });
   }
 
+    public handleLogout(e: React.SyntheticEvent<HTMLAnchorElement>) {
+      this.props.setLoggedOut();
+    }
+
   public render() {
     const loggedInUser = this.props.match.params.user;
 
     return (
       <div className="day section">
-        <div className="day-header title">{this.getDateString()}</div>
+        <div className="day-header">
+          <div className="today">
+            <Link to={`/day/${loggedInUser}/${new Date().getTime()}`} className="button is-link">
+              Today
+            </Link>
+          </div>
+          <div className="title">
+          {this.getDateString()}
+          </div>
+          <div className="logout">
+            <Link to="/logout" className="button is-link pull-right" onClick={this.handleLogout}>
+              Logout
+            </Link>
+          </div>
+        </div>
         <div className="columns">
           <div className="column is-1">
             <Link to={`/day/${loggedInUser}/${this.genPrev()}`}>
